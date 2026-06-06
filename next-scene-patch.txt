@@ -1,0 +1,21 @@
+---
+*** Begin Patch
+*** Update File: c:\Users\benji\Desktop\bloom_fixed\next-scene.html
+@@
+-    .back-link{color:#f3e8ff;text-decoration:none;border:1px solid rgba(255,255,255,0.06);padding:8px 14px;border-radius:999px}
++    .back-link{color:#f3e8ff;text-decoration:none;border:1px solid rgba(255,255,255,0.06);padding:8px 14px;border-radius:999px}
++
++    @media (max-width: 760px) {
++      body{align-items:flex-start;padding-top:20px}
++      .player{flex-wrap:wrap;justify-content:center;padding:20px;gap:18px;max-width:95%;width:auto;}
++      .art{width:180px;height:180px;flex:0 0 180px;}
++      .meta{text-align:left;min-width:0;}
++      h1{font-size:1.45rem}
++      .controls{flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:12px}
++      .play-btn{width:60px;height:60px}
++      .prog{flex:1;min-width:180px;}
++      .time-row{justify-content:space-between}
++      .bottom-row{flex-wrap:wrap;justify-content:space-between;gap:10px}
++      .back-link{padding:8px 12px}
++    }
+*** End Patch

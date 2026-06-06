@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Now Playing — Ginintuang Tanawin</title>
+  <style>
+    :root{--accent:#d89bff}
+    html,body{height:100%;margin:0;font-family:Georgia,serif;background:#08020a}
+    body{display:flex;align-items:center;justify-content:center;background-image:url('img/background.jpg');background-size:cover;background-position:center}
+    .overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.7))}
+    .player{position:relative;z-index:2;max-width:760px;width:96%;display:flex;gap:28px;align-items:center;padding:28px;border-radius:14px;background:rgba(12,6,20,0.55);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+    .art{width:260px;height:260px;border-radius:12px;flex:0 0 260px;background-image:url('img/new.jpg');background-size:cover;background-position:center;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+    .continue-link{position:fixed;left:50%;bottom:120px;z-index:5;color:#ffe17a;text-decoration:underline;text-decoration-thickness:2px;text-decoration-color:rgba(255,225,122,0.9);text-underline-offset:3px;font-weight:700;font-size:0.95rem;letter-spacing:0.05em;line-height:1.2;text-shadow:0 0 12px rgba(255,225,122,0.35);border:none;background:none;padding:0;transition:transform 0.2s ease,color 0.2s ease;transform:translateX(-50%);animation:float-text 3s ease-in-out infinite;}
+    .continue-link:hover{text-decoration:underline;color:#fff;transform:translateX(-50%) translateY(-1px);}
+    @keyframes float-text{0%,100%{transform:translateX(-50%) translateY(0);opacity:1;}50%{transform:translateX(-50%) translateY(-2px);opacity:0.88;}}
+    .meta{flex:1;color:#fff}
+    h1{margin:0 0 6px;font-size:1.7rem;color:var(--accent)}
+    p.artist{margin:0 0 18px;opacity:0.95}
+    .controls{display:flex;align-items:center;gap:14px}
+    .play-btn{width:72px;height:72px;border-radius:999px;border:2px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));cursor:pointer}
+    .prog{flex:1}
+    .prog input[type=range]{width:100%}
+    .time-row{display:flex;justify-content:space-between;font-size:0.85rem;opacity:0.9;margin-top:8px}
+    .bottom-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+    .back-link{color:#f3e8ff;text-decoration:none;border:1px solid rgba(255,255,255,0.06);padding:8px 14px;border-radius:999px}
+
+    @media (max-width: 760px) {
+      body{align-items:flex-start;padding-top:30px}
+      .player{flex-direction:column;align-items:center;padding:20px;gap:20px;max-width:92%;width:calc(100% - 24px);}
+      .art{width:100%;max-width:380px;height:auto;aspect-ratio:1/1;}
+      .meta{text-align:center}
+      h1{font-size:1.5rem}
+      .controls{flex-direction:column;align-items:center;}
+      .play-btn{width:64px;height:64px}
+      .prog{width:100%;}
+      .time-row{flex-wrap:wrap;justify-content:center;gap:10px}
+      .bottom-row{flex-direction:column;align-items:center;gap:12px}
+      .back-link{width:100%;max-width:260px;text-align:center}
+      .continue-link{left:50%;bottom:90px;transform:translateX(-50%);font-size:0.9rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <a href="next-page.html" class="continue-link">Tap here to continue</a>
+  <div class="player">
+    <div class="art" aria-hidden="true"></div>
+    <div class="meta">
+      <h1>Ginintuang Tanawin</h1>
+      <p class="artist">Our Favorite Song</p>
+
+      <div class="controls">
+        <button id="play" class="play-btn">&#9658;</button>
+        <div class="prog">
+          <input id="seek" type="range" min="0" max="100" value="0">
+          <div class="time-row"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+        <a href="album.html" class="back-link">Back to Album</a>
+        <div style="color:rgba(255,255,255,0.8)">Now playing</div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audio" src="audio/favsong.mp3" preload="metadata"></audio>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const play = document.getElementById('play');
+    const seek = document.getElementById('seek');
+    const cur = document.getElementById('cur');
+    const dur = document.getElementById('dur');
+
+    function format(t){ t = Math.floor(t); const m = Math.floor(t/60); const s = t%60; return m+':'+(s<10?'0'+s:s); }
+
+    audio.addEventListener('loadedmetadata', ()=>{
+      seek.max = Math.floor(audio.duration);
+      dur.textContent = format(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', ()=>{
+      seek.value = Math.floor(audio.currentTime);
+      cur.textContent = format(audio.currentTime);
+    });
+
+    seek.addEventListener('input', ()=>{ audio.currentTime = seek.value; });
+
+    play.addEventListener('click', ()=>{
+      if (audio.paused){ audio.play(); play.textContent='\u275A\u275A'; }
+      else { audio.pause(); play.textContent='\u25B6'; }
+    });
+
+    window.addEventListener('load', ()=>{ setTimeout(()=>{ audio.play().catch(()=>{}); if (!audio.paused) play.textContent='\u275A\u275A'; }, 200); });
+
+    window.addEventListener('beforeunload', ()=>{
+      try {
+        sessionStorage.setItem('favsongTime', String(audio.currentTime || 0));
+        sessionStorage.setItem('favsongShouldPlay', '1');
+      } catch (e) {}
+    });
+  </script>
+</body>
+</html>
